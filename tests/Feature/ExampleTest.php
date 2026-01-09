@@ -1,7 +1,10 @@
 <?php
 
-it('returns a successful response', function () {
-    $response = $this->get('/');
+use Inertia\Testing\AssertableInertia as Assert;
 
-    $response->assertStatus(200);
+it('renders the landing page', function () {
+    $response = $this->get(route('home'));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn (Assert $page) => $page->component('welcome'));
 });
