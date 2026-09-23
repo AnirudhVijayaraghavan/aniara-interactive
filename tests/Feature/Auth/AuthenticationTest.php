@@ -7,7 +7,7 @@ use Laravel\Fortify\Features;
 test('login screen can be rendered', function () {
     $response = $this->get(route('login'));
 
-    $response->assertStatus(200);
+    $response->assertOk();
 });
 
 test('users can authenticate using the login screen', function () {
@@ -23,22 +23,14 @@ test('users can authenticate using the login screen', function () {
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {
-    if (! Features::canManageTwoFactorAuthentication()) {
-        $this->markTestSkipped('Two-factor authentication is not enabled.');
-    }
+    $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 
     Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->create();
-
-    $user->forceFill([
-        'two_factor_secret' => encrypt('test-secret'),
-        'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
-        'two_factor_confirmed_at' => now(),
-    ])->save();
+    $user = User::factory()->withTwoFactor()->create();
 
     $response = $this->post(route('login'), [
         'email' => $user->email,
@@ -66,8 +58,9 @@ test('users can logout', function () {
 
     $response = $this->actingAs($user)->post(route('logout'));
 
-    $this->assertGuest();
     $response->assertRedirect(route('home'));
+
+    $this->assertGuest();
 });
 
 test('users are rate limited', function () {

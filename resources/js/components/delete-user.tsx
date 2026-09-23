@@ -1,6 +1,9 @@
+import { Form } from '@inertiajs/react';
+import { useRef } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import HeadingSmall from '@/components/heading-small';
+import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,17 +14,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Form } from '@inertiajs/react';
-import { useRef } from 'react';
 
 export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
 
     return (
         <div className="space-y-6">
-            <HeadingSmall
+            <Heading
+                variant="small"
                 title="Delete account"
                 description="Delete your account and all of its resources"
             />
@@ -72,9 +73,8 @@ export default function DeleteUser() {
                                             Password
                                         </Label>
 
-                                        <Input
+                                        <PasswordInput
                                             id="password"
-                                            type="password"
                                             name="password"
                                             ref={passwordInput}
                                             placeholder="Password"
